@@ -1,0 +1,38 @@
+<h2>Login Page</h2>
+
+<!-- Display errors if there are any -->
+<% if (errors) { %>
+  <div>
+    <% errors.forEach(function(error) { %>
+      <p><%= error.msg %></p>
+    <% }); %>
+  </div>
+<% } %>
+
+<!-- Login form -->
+<form action="/login" method="POST">
+  <div>
+    <label for="username">Username:</label>
+    <input
+      type="text"
+      id="username"
+      name="username"
+      value="<%= typeof formData !== 'undefined' ? formData.username : '' %>"
+      required
+    />
+  </div>
+
+  <div>
+    <label for="password">Password:</label>
+    <input
+      type="password"
+      id="password"
+      name="password"
+      required
+    />
+  </div>
+
+  <div>
+    <button type="submit">Login</button>
+  </div>
+</form>

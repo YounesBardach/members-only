@@ -1,0 +1,5 @@
+<h2>Error <%= title %></h2>
+<p><%= message %></p>
+<% if (process.env.NODE_ENV === 'development') { %>
+<pre><%= stack %></pre>
+<% } %>

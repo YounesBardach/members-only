@@ -1,0 +1,58 @@
+<h2>Sign Up</h2>
+
+<!-- Display errors if there are any -->
+<% if (errors) { %>
+<div>
+  <% errors.forEach(function(error) { %>
+  <p><%= error.msg %></p>
+  <% }); %>
+</div>
+<% } %>
+
+<form action="/signup" method="POST">
+  <!-- First Name -->
+  <label for="first_name">First Name:</label>
+  <input
+    type="text"
+    id="first_name"
+    name="first_name"
+    value="<%= typeof formData !== 'undefined' ? formData.first_name : '' %>"
+    required
+  />
+
+  <!-- Last Name -->
+  <label for="last_name">Last Name:</label>
+  <input
+    type="text"
+    id="last_name"
+    name="last_name"
+    value="<%= typeof formData !== 'undefined' ? formData.last_name : '' %>"
+    required
+  />
+
+  <!-- Username -->
+  <label for="username">Username:</label>
+  <input
+    type="text"
+    id="username"
+    name="username"
+    value="<%= typeof formData !== 'undefined' ? formData.username : '' %>"
+    required
+  />
+
+  <!-- Password -->
+  <label for="password">Password:</label>
+  <input type="password" id="password" name="password" required />
+
+  <!-- Confirm Password -->
+  <label for="confirm_password">Confirm Password:</label>
+  <input
+    type="password"
+    id="confirm_password"
+    name="confirm_password"
+    required
+  />
+
+  <!-- Submit Button -->
+  <button type="submit">Sign Up</button>
+</form>

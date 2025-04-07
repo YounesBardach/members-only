@@ -1,0 +1,27 @@
+<h2>VIP Club</h2>
+
+<!-- Display errors if there are any -->
+<% if (errors) { %>
+<div>
+  <% errors.forEach(function(error) { %>
+  <p><%= error.msg %></p>
+  <% }); %>
+</div>
+<% } %>
+
+<!-- Display success message if membership is updated -->
+<% if (successMessage) { %>
+<div>
+  <p><%= successMessage %></p>
+</div>
+<% } %>
+
+<form action="/vip" method="POST">
+  <label for="passcode">Enter Secret Passcode:</label>
+  <input type="password" id="passcode" name="passcode" required />
+
+  <!-- Submit Button -->
+  <button type="submit">Join the VIP Club</button>
+</form>
+
+<p>Don't have a passcode yet? Contact the club administrator!</p>
