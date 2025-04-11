@@ -1,9 +1,17 @@
-import { Router } from "express";
-import * as loginController from "../controllers/loginController.mjs";
+import express from 'express';
+import { getLoginPage, loginUser, logoutUser } from '../controllers/loginController.mjs';
+import { isNotAuthenticated } from '../middleware/auth.mjs';
+import { loginValidationRules } from '../middleware/validation/loginValidation.mjs';
 
-const loginRouter = Router();
+const router = express.Router();
 
-loginRouter.get("/", loginController.);
-loginRouter.post("/", loginController.);
+// Render login page (GET request)
+router.get('/', isNotAuthenticated, getLoginPage);
 
-export default loginRouter;
+// Handle login form submission (POST request)
+router.post('/', isNotAuthenticated, loginValidationRules, loginUser);
+
+// Handle logout (GET request)
+router.get('/logout', logoutUser);
+
+export default router;

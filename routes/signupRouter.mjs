@@ -1,14 +1,12 @@
 import express from "express";
-import { renderSignupPage, addUser } from "../controllers/userController.mjs";
+import { renderSignupPage, addUser } from "../controllers/signupController.mjs";
 
 const signupRouter = express.Router();
 
 // Render signup page (GET request)
-
-signupRouter.get("/signup", renderSignupPage);
+signupRouter.get("/", renderSignupPage);
 
 // Handle user signup (POST request)
-
-signupRouter.post("/signup", addUser);
+signupRouter.post("/", addUser);
 
 export default signupRouter;

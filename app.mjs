@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from "express";
 import expressLayouts from "express-ejs-layouts";
 import path from "path";
@@ -6,7 +7,14 @@ import homeRouter from "./routes/homeRouter.mjs";
 import loginRouter from "./routes/loginRouter.mjs";
 import signupRouter from "./routes/signupRouter.mjs";
 import vipRouter from "./routes/vipRouter.mjs";
-import methodOverride from "method-override";
+import messageRouter from "./routes/messageRouter.mjs";
+import session from 'express-session';
+import passport from './config/passport.mjs';
+import { pool } from './models/pool.mjs';
+import pgSession from 'connect-pg-simple';
+import flash from 'connect-flash';
+
+// Database connection parameters are now handled by pool.mjs using command line arguments
 
 const app = express();
 
@@ -34,9 +42,40 @@ app.set("view engine", "ejs");
 
 app.use(express.urlencoded({ extended: true }));
 
-// methodOverride middleware allows us to use PUT and DELETE HTTP methods where they are not supported
+// Session configuration
+const sessionSecret = process.env.RAILWAY_SESSION_SECRET || process.env.SESSION_SECRET;
+if (!sessionSecret) {
+  throw new Error('Session secret is required. Please set RAILWAY_SESSION_SECRET or SESSION_SECRET environment variable.');
+}
 
-app.use(methodOverride("_method"));
+app.use(session({
+  store: new (pgSession(session))({
+    pool,
+    tableName: 'user_sessions'
+  }),
+  secret: sessionSecret,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    secure: process.env.NODE_ENV === 'production' // Use secure cookies in production
+  }
+}));
+
+// Initialize Passport and restore authentication state from session
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Flash messages middleware
+app.use(flash());
+
+// Make flash messages available to all views
+app.use((req, res, next) => {
+  res.locals.success_msg = req.flash('success');
+  res.locals.error_msg = req.flash('error');
+  res.locals.user = req.user || null; // Make user available to all views
+  next();
+});
 
 // Use express-ejs-layouts and the layout file to wrap other views. 
 
@@ -49,38 +88,51 @@ app.use("/", homeRouter);
 app.use("/signup", signupRouter);
 app.use("/login", loginRouter);
 app.use("/vip", vipRouter);
+app.use("/messages", messageRouter);
 
-//Test for error handling middleware
-
-// app.get("/crash", (req, res, next) => {
-//   throw new Error("Unexpected server crash!");
-// });
-
+// Handle 404 errors
 app.use((req, res, next) => {
-  res.status(404).render("404", { title: "404 Not Found" });
+  res.status(404).render("errors/404", { 
+    title: "404 Not Found",
+    user: req.user || null
+  });
 });
 
+// Handle database connection errors
 app.use((err, req, res, next) => {
-  console.error(err.stack); // Log the error for debugging purposes
+  if (err.code === 'ECONNREFUSED' || err.code === '28P01') {
+    console.error('Database connection error:', err);
+    return res.status(500).render("errors/500", {
+      title: "Database Error",
+      message: "Unable to connect to the database. Please try again later.",
+      user: req.user || null
+    });
+  }
+  next(err);
+});
 
-  // Set the status code to the error's status, or default to 500
+// Handle all other errors
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+
   const statusCode = err.status || 500;
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
-  // Check if the request expects a JSON response (e.g., for an API endpoint)
-  if (req.accepts("json")) {
-    // Send a JSON response with the error details
+  // For API requests
+  if (req.accepts('json')) {
     return res.status(statusCode).json({
-      status: "error",
-      message: err.message || "Something went wrong!",
-      stack: process.env.NODE_ENV === "development" ? err.stack : null, // Show stack trace only in development
+      status: 'error',
+      message: err.message || 'Something went wrong!',
+      ...(isDevelopment && { stack: err.stack })
     });
   }
 
-  // Otherwise, render an error page (for front-end users)
-  res.status(statusCode).render("errors", {
+  // For regular requests
+  res.status(statusCode).render("errors/500", {
     title: `Error ${statusCode}`,
-    message: err.message || "Something went wrong!",
-    stack: process.env.NODE_ENV === "development" ? err.stack : null, // Show stack trace only in development
+    message: err.message || 'Something went wrong!',
+    stack: isDevelopment ? err.stack : null,
+    user: req.user || null
   });
 });
 

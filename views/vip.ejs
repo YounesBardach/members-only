@@ -1,27 +1,42 @@
-<h2>VIP Club</h2>
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="text-center mb-0">Join VIP Club</h2>
+        </div>
+        <div class="card-body">
+          <% if (locals.error) { %>
+            <div class="alert alert-danger">
+              <%= error %>
+            </div>
+          <% } %>
+          
+          <% if (locals.success) { %>
+            <div class="alert alert-success">
+              <%= success %>
+            </div>
+          <% } %>
 
-<!-- Display errors if there are any -->
-<% if (errors) { %>
-<div>
-  <% errors.forEach(function(error) { %>
-  <p><%= error.msg %></p>
-  <% }); %>
+          <form action="/vip" method="POST">
+            <div class="mb-3">
+              <label for="passcode" class="form-label">VIP Passcode</label>
+              <input type="text" class="form-control" id="passcode" name="passcode" required>
+              <div class="form-text">Enter the secret passcode to join the VIP club.</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="adminPasscode" class="form-label">Admin Passcode (Optional)</label>
+              <input type="text" class="form-control" id="adminPasscode" name="adminPasscode">
+              <div class="form-text">Enter the admin passcode to gain administrative privileges.</div>
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">Join VIP</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-<% } %>
-
-<!-- Display success message if membership is updated -->
-<% if (successMessage) { %>
-<div>
-  <p><%= successMessage %></p>
-</div>
-<% } %>
-
-<form action="/vip" method="POST">
-  <label for="passcode">Enter Secret Passcode:</label>
-  <input type="password" id="passcode" name="passcode" required />
-
-  <!-- Submit Button -->
-  <button type="submit">Join the VIP Club</button>
-</form>
-
-<p>Don't have a passcode yet? Contact the club administrator!</p>

@@ -40,3 +40,26 @@ export async function createUser(
     client.release();
   }
 }
+
+// Update user membership status
+export async function updateUserMembership(userId, isMember) {
+  const query = `
+    UPDATE users 
+    SET membership = $1 
+    WHERE id = $2 
+    RETURNING *
+  `;
+  const result = await pool.query(query, [isMember, userId]);
+  return result.rows[0];
+}
+
+export async function updateUserAdmin(userId, isAdmin) {
+  const query = `
+    UPDATE users 
+    SET admin = $1 
+    WHERE id = $2 
+    RETURNING *
+  `;
+  const result = await pool.query(query, [isAdmin, userId]);
+  return result.rows[0];
+}

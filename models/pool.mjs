@@ -3,25 +3,24 @@ import pkg from "pg";
 const { Pool } = pkg;
 
 // Parse CLI arguments
-
 const argv = yargs(process.argv.slice(2))
   .option("user", {
     alias: "u",
     type: "string",
-    demandOption: true,
     description: "Database user",
+    demandOption: true
   })
   .option("password", {
     alias: "p",
     type: "string",
-    demandOption: true,
     description: "Database password",
+    demandOption: true
   })
   .option("host", {
     alias: "h",
     type: "string",
-    demandOption: true,
     description: "Database host",
+    demandOption: true
   })
   .option("port", {
     alias: "P",
@@ -32,8 +31,8 @@ const argv = yargs(process.argv.slice(2))
   .option("database", {
     alias: "d",
     type: "string",
-    demandOption: true,
     description: "Database name",
+    demandOption: true
   })
   .option("ssl", {
     type: "boolean",
@@ -42,7 +41,6 @@ const argv = yargs(process.argv.slice(2))
   }).argv;
 
 // Construct connection string from CLI args
-
 const connectionString = `postgres://${argv.user}:${argv.password}@${argv.host}:${argv.port}/${argv.database}`;
 
 export const pool = new Pool({
@@ -69,7 +67,3 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   // Run the test only if this module is the main script
   testConnection();
 }
-
-// postgresql://[user]:[password]@[host]:[port]/[database]
-// postgresql://virtu:Virtu+22@localhost:5432/top_users
-// node pool.mjs -u virtu -p 'Virtu+22' -h localhost -P 5432 -d top_users

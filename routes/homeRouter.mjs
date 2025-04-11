@@ -1,8 +1,9 @@
 import express from "express";
+import { getMessages } from '../controllers/messageController.mjs';
+
 const homeRouter = express.Router();
 
-homeRouter.get("/", (req, res) => {
-  res.render("home", { title: "Home" });
-});
+// Home page with messages
+homeRouter.get("/", getMessages);
 
 export default homeRouter;

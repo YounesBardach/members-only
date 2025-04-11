@@ -1,1 +1,112 @@
-<h2>Welcome to the Odin Club</h2>
+<div class="container">
+  <!-- Hero Section -->
+  <div class="row align-items-center py-5">
+    <div class="col-lg-6">
+      <h1 class="display-4 fw-bold mb-4">Welcome to Odin Club</h1>
+      <p class="lead mb-4">Join our exclusive community and unlock premium features with VIP membership.</p>
+      <% if (!user) { %>
+        <div class="d-grid gap-2 d-md-flex">
+          <a href="/signup" class="btn btn-primary btn-lg px-4 me-md-2">Sign Up</a>
+          <a href="/login" class="btn btn-outline-primary btn-lg px-4">Login</a>
+        </div>
+      <% } else { %>
+        <div class="d-grid gap-2 d-md-flex">
+          <a href="/vip" class="btn btn-primary btn-lg px-4 me-md-2">Join VIP Club</a>
+          <a href="/messages/new" class="btn btn-outline-primary btn-lg px-4">Create Message</a>
+        </div>
+      <% } %>
+    </div>
+    <div class="col-lg-6">
+      <img src="/images/hero.jpg" alt="Odin Club" class="img-fluid rounded shadow-lg">
+    </div>
+  </div>
+
+  <!-- Messages Section -->
+  <div class="row py-5">
+    <div class="col-12">
+      <h2 class="mb-4">Club Messages</h2>
+      
+      <% if (locals.success_msg) { %>
+        <div class="alert alert-success">
+          <%= success_msg %>
+        </div>
+      <% } %>
+      
+      <% if (locals.error) { %>
+        <div class="alert alert-danger">
+          <%= error %>
+        </div>
+      <% } %>
+      
+      <% if (!user) { %>
+        <div class="alert alert-info">
+          <p class="mb-0">Please <a href="/login" class="alert-link">login</a> to view club messages.</p>
+        </div>
+      <% } else if (messages && messages.length > 0) { %>
+        <div class="row">
+          <% messages.forEach(function(message) { %>
+            <div class="col-md-6 mb-4">
+              <div class="card h-100">
+                <div class="card-header">
+                  <h3 class="card-title h5 mb-0"><%= message.title %></h3>
+                </div>
+                <div class="card-body">
+                  <p class="card-text"><%= message.text %></p>
+                  <% if (user.membership) { %>
+                    <div class="text-muted small">
+                      <p class="mb-0">Posted by: <%= message.username %></p>
+                      <p class="mb-0">Date: <%= new Date(message.timestamp).toLocaleString() %></p>
+                    </div>
+                  <% } else { %>
+                    <div class="text-muted small">
+                      <p class="mb-0"><a href="/vip" class="text-primary">Join VIP</a> to see who posted this message and when.</p>
+                    </div>
+                  <% } %>
+                  <% if (user && user.admin) { %>
+                    <form action="/messages/<%= message.id %>/delete" method="POST" class="mt-2">
+                      <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this message?')">
+                        Delete Message
+                      </button>
+                    </form>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      <% } else { %>
+        <div class="alert alert-info">
+          No messages yet. Be the first to <a href="/messages/new" class="alert-link">create a message</a>!
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <div class="row g-4 py-5">
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <h3 class="card-title h5">Exclusive Content</h3>
+          <p class="card-text">Access premium content and resources available only to VIP members.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <h3 class="card-title h5">Special Events</h3>
+          <p class="card-text">Get early access to special events and exclusive member gatherings.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <h3 class="card-title h5">Member Benefits</h3>
+          <p class="card-text">Enjoy special discounts and perks reserved for VIP members only.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

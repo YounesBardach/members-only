@@ -1,6 +1,6 @@
 //checks req.body for the parsed data
 
-import { body } from "express-validator";
+import { body, validationResult } from "express-validator";
 
 export const signupValidationRules = [
   body("first_name")
