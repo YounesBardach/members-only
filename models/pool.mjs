@@ -1,56 +1,26 @@
-import yargs from "yargs";
 import pkg from "pg";
 const { Pool } = pkg;
 
-// Parse CLI arguments
-const argv = yargs(process.argv.slice(2))
-  .option("user", {
-    alias: "u",
-    type: "string",
-    description: "Database user",
-    demandOption: true
-  })
-  .option("password", {
-    alias: "p",
-    type: "string",
-    description: "Database password",
-    demandOption: true
-  })
-  .option("host", {
-    alias: "h",
-    type: "string",
-    description: "Database host",
-    demandOption: true
-  })
-  .option("port", {
-    alias: "P",
-    type: "number",
-    default: 5432,
-    description: "Database port (default: 5432)",
-  })
-  .option("database", {
-    alias: "d",
-    type: "string",
-    description: "Database name",
-    demandOption: true
-  })
-  .option("ssl", {
-    type: "boolean",
-    default: false,
-    description: "Enable SSL (default: false)",
-  }).argv;
+const isProduction = process.env.NODE_ENV === 'production';
 
-// Construct connection string from CLI args
-const connectionString = `postgres://${argv.user}:${argv.password}@${argv.host}:${argv.port}/${argv.database}`;
+// Use DATABASE_URL if provided (Railway/production), otherwise construct from individual vars
+const connectionString = process.env.DATABASE_URL || 
+  `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
 
 export const pool = new Pool({
   connectionString,
-  ssl: argv.ssl ? { rejectUnauthorized: false } : false,
+  ssl: isProduction ? { rejectUnauthorized: false } : false
 });
 
-console.log(
-  `✅ Connected to ${argv.database} at ${argv.host}:${argv.port} as ${argv.user}`
-);
+// Log successful connection
+pool.on('connect', () => {
+  console.log('✅ Connected to PostgreSQL database');
+});
+
+// Log any errors
+pool.on('error', (err) => {
+  console.error('❌ PostgreSQL pool error:', err.message);
+});
 
 async function testConnection() {
   try {

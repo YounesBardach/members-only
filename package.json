@@ -5,7 +5,8 @@
   "main": "app.mjs",
   "type": "module",
   "scripts": {
-    "start": "node app.mjs"
+    "start": "node app.mjs",
+    "db:init": "node models/createTables.mjs"
   },
   "keywords": [],
   "author": "",
@@ -23,7 +24,6 @@
     "express-validator": "^7.0.1",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
-    "pg": "^8.11.0",
-    "yargs": "^17.7.2"
+    "pg": "^8.11.0"
   }
 }
