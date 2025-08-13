@@ -66,8 +66,8 @@ npm install
 
 # 2) Create and populate .env (see below)
 
-# 3) Create tables locally (optional if using Railway managed DB with existing tables)
-npm run db:init
+# 3) Create tables locally (optional if using Railway-managed DB with existing tables)
+npm run db:init (js script)
 
 # 4) Start the server
 npm start
@@ -225,10 +225,3 @@ PostgreSQL).
 - VIP passcodes (demo): `vip` to join members; optional admin passcode `boss`
   (see `controllers/vipController.mjs`). For production, consider moving these
   to env vars.
-
----
-
-### Credits
-
-Built for learning purposes following The Odin Project’s assignment:
-[Members Only](https://www.theodinproject.com/lessons/node-path-nodejs-members-only).
