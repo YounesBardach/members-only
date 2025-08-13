@@ -6,7 +6,7 @@
 
 # Members Only (Node.js + Passport + PostgreSQL)
 
-A small clubhouse app built to practice authentication and authorization in
+A small app built to practice authentication and authorization in
 Node.js as part of The Odin Project.
 
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
